@@ -10,6 +10,7 @@ before_install:
   - cd benchmark-master
 
 install:
+  - sudo apt-get install -qq libgflags-dev
   - cmake . -DCMAKE_BUILD_TYPE=Release
   - make
   - sudo make install

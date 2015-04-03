@@ -1,3 +1,13 @@
+Install gflags
+
+Linux:
+
+    $ sudo apt-get install libgflags-dev
+
+OS X:
+
+    $ brew install gflags
+
 Download googletest
 
     $ curl -O https://googletest.googlecode.com/files/gtest-1.7.0.zip
