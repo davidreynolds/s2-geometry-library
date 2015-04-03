@@ -3,6 +3,10 @@ compiler:
   - gcc
 
 before_install:
+  - wget https://gflags.googlecode.com/files/libgflags0_2.0-1_amd64.deb
+  - sudo dpkg -i libgflags0_2.0-1_amd64.deb
+  - wget https://gflags.googlecode.com/files/libgflags-dev_2.0-1_amd64.deb
+  - sudo dpkg -i libgflags-dev_2.0-1_amd64.deb
   - curl -O https://googletest.googlecode.com/files/gtest-1.7.0.zip
   - unzip gtest-1.7.0.zip
   - curl -OL https://github.com/google/benchmark/archive/master.zip
@@ -10,7 +14,6 @@ before_install:
   - cd benchmark-master
 
 install:
-  - sudo apt-get install -qq libgflags-dev
   - cmake . -DCMAKE_BUILD_TYPE=Release
   - make
   - sudo make install
