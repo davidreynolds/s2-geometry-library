@@ -1,0 +1,160 @@
+./s2edgeindex_test --gtest_filter=XXX
+Note: Google Test filter = XXX
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Run on (4 X 1000 MHz CPU s)
+2015-04-02 23:19:21
+Benchmark                           Time(ns)    CPU(ns) Iterations
+------------------------------------------------------------------
+BM_TestCrossingsSparse/10/1             6633       6607     103578
+BM_TestCrossingsSparse/10/0            47773      47626      15515
+BM_TestCrossingsSparse/50/1            82940      82696       8643
+BM_TestCrossingsSparse/50/0           238653     237851       2677
+BM_TestCrossingsSparse/100/1          325668     324750       2288
+BM_TestCrossingsSparse/100/0          541775     539256       1247
+BM_TestCrossingsSparse/300/1         2745036    2733632        253
+BM_TestCrossingsSparse/300/0         1632224    1626303        449
+BM_TestCrossingsSparse/600/1        10651006   10617098         61
+BM_TestCrossingsSparse/600/0         3143506    3134050        239
+BM_TestCrossingsSparse/1000/1       28760786   28647600         25
+BM_TestCrossingsSparse/1000/0        5582467    5555547        128
+BM_TestCrossingsSparse/1.95312k/0   11963171   11926290         62
+BM_TestCrossingsSparse/4.88281k/0   31931227   31798727         22
+BM_TestCrossingsSparse/9.76562k/0   69969914   69716727         11
+BM_TestCrossingsSparse/19.5312k/0  183181524  182301000          4
+BM_TestCrossingsSparse/48.8281k/0  798767090  794335000          1
+BM_TestCrossingsSparse/97.6562k/0 2790724754 2778565000          1
+BM_QuadTreeInsertionCost             1065310    1055258        749
+BM_QuadTreeFindCost/10                   956        941     716883
+BM_QuadTreeFindCost/100                  409        403    1633621
+BM_QuadTreeFindCost/1000                 370        368    1800606
+BM_QuadTreeFindCost/9.76562k             362        360    1946553
+./s2edgeutil_test --gtest_filter=XXX
+Note: Google Test filter = XXX
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Run on (4 X 1000 MHz CPU s)
+2015-04-02 23:19:49
+Benchmark                    Time(ns)    CPU(ns) Iterations
+-----------------------------------------------------------
+BM_EdgeOrVertexCrossing            24         24   25183208
+BM_RobustCrossing                  23         23   31084448
+BM_RobustCrosserEdgesCross         10         10   69375619
+./s2latlng_test --gtest_filter=XXX
+Note: Google Test filter = XXX
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Run on (4 X 1000 MHz CPU s)
+2015-04-02 23:19:51
+Benchmark    Time(ns)    CPU(ns) Iterations
+-------------------------------------------
+BM_ToPoint         47         47   12986049
+./s2loop_test --gtest_filter=XXX
+Note: Google Test filter = XXX
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Run on (4 X 1000 MHz CPU s)
+2015-04-02 23:19:52
+Benchmark                  Time(ns)    CPU(ns) Iterations
+---------------------------------------------------------
+BM_ContainsOrCrosses/8          104        104    6588855
+BM_ContainsOrCrosses/64        1763       1758     375068
+BM_ContainsOrCrosses/512      24048      23977      27754
+BM_ContainsOrCrosses/4k      202175     201460       3316
+BM_ContainsOrCrosses/8k      390815     389516       1772
+BM_IsValid/32                 12356      12306      49908
+BM_IsValid/64                 37125      36974      18115
+BM_IsValid/128               196307     194051       3562
+BM_IsValid/256               411219     405556       1638
+BM_IsValid/512               718158     715453        885
+BM_IsValid/4k               6799777    6765778        108
+BM_IsValid/32k            810496330  803959000          1
+BM_ContainsQuery/4              123        122    5789478
+BM_ContainsQuery/8              166        164    4750916
+BM_ContainsQuery/64             419        416    1643308
+BM_ContainsQuery/512           2422       2388     271064
+BM_ContainsQuery/4k           11845      11726      56662
+BM_ContainsQuery/32k          15330      15252      35359
+BM_ContainsQuery/64k          17686      17605      28500
+./s2polygon_test --gtest_filter=XXX
+Note: Google Test filter = XXX
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Run on (4 X 1000 MHz CPU s)
+2015-04-02 23:20:10
+Benchmark                       Time(ns)    CPU(ns) Iterations
+--------------------------------------------------------------
+BM_S2Decoding/8                     3593       3575     190436
+BM_S2Decoding/64                    4087       4067     185309
+BM_S2Decoding/512                  10645      10580      66622
+BM_S2Decoding/4k                  108340     107747       6461
+BM_S2Decoding/32k                2944609    2908800        230
+BM_S2Decoding/128k              14500208   14428480         50
+BM_S2DecodingWithinScope/8          2038       2031     351670
+BM_S2DecodingWithinScope/64         2011       2002     319064
+BM_S2DecodingWithinScope/512        2015       2002     348736
+BM_S2DecodingWithinScope/4k         2041       2030     321151
+BM_S2DecodingWithinScope/32k        1975       1964     344243
+BM_S2DecodingWithinScope/128k       2086       2080     349855
+BM_DeepPolygonUnion/8            1650067    1644849        398
+BM_DeepPolygonUnion/64           9918936    9866148         61
+BM_DeepPolygonUnion/128         17219241   17132732         41
+BM_DeepPolygonUnion/256         33730849   33587043         23
+BM_DeepPolygonUnion/512         64555502   64280700         10
+BM_DeepPolygonUnion/1024       137269545  136720400          5
+BM_DeepPolygonUnion/4k         640853167  637464000          1
+BM_DeepPolygonUnion/8k        1491925955 1484570000          1
+BM_ShallowPolygonUnion/8         3704555    3689517        209
+BM_ShallowPolygonUnion/64       11925309   11872148         54
+BM_ShallowPolygonUnion/128      20313521   20248730         37
+BM_ShallowPolygonUnion/256      38088888   37930062         16
+BM_ShallowPolygonUnion/512      79930041   79641333          9
+BM_ShallowPolygonUnion/1024    193065047  192214750          4
+BM_ShallowPolygonUnion/4k      903903723  898539000          1
+BM_ShallowPolygonUnion/8k     1241830349 1236594000          1
+BM_DisjointPolygonUnion/8        2444504    2435833        300
+BM_DisjointPolygonUnion/64      11172302   11121095         63
+BM_DisjointPolygonUnion/128     19089063   19010083         36
+BM_DisjointPolygonUnion/256     41114238   40900722         18
+BM_DisjointPolygonUnion/512     92059493   91680000          8
+BM_DisjointPolygonUnion/1024   198329449  197423500          4
+BM_DisjointPolygonUnion/4k    1007044077 1000355000          1
+BM_DisjointPolygonUnion/8k    2352623224 2343492000          1
+./s2regioncoverer_test --gtest_filter=XXX
+Note: Google Test filter = XXX
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+Run on (4 X 1000 MHz CPU s)
+2015-04-02 23:20:51
+Benchmark               Time(ns)    CPU(ns) Iterations
+------------------------------------------------------
+BM_Covering/8/8           180134     179417       3412
+BM_Covering/8/64          231548     230711       2794
+BM_Covering/8/512        1509438    1503189        488
+BM_Covering/8/4k         7605033    7572810         84
+BM_Covering/8/32k       51045613   50851273         11
+BM_Covering/8/128k     214555661  213840000          3
+BM_Covering/64/8         1318287    1313973        550
+BM_Covering/64/64        1808492    1801750        400
+BM_Covering/64/512       5844949    5823667        120
+BM_Covering/64/4k       25702373   25596767         30
+BM_Covering/64/32k      79722822   79445875          8
+BM_Covering/64/128k    250602961  249833667          3
+BM_Covering/512/8        8801492    8778816         76
+BM_Covering/512/64      12040905   12006863         51
+BM_Covering/512/512     31915406   31836043         23
+BM_Covering/512/4k     146495771  145810400          5
+BM_Covering/512/32k    277921120  276939333          3
+BM_Covering/512/128k   538223505  535248000          1
+BM_Covering/1024/8      17624091   17568568         44
+BM_Covering/1024/64     26071841   25980065         31
+BM_Covering/1024/512    58972716   58788857         14
+BM_Covering/1024/4k    218935609  218228250          4
+BM_Covering/1024/32k   415511489  414008000          2
+BM_Covering/1024/128k 1057274342 1048687000          1
