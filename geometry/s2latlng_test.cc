@@ -4,8 +4,8 @@
 #include "base/macros.h"
 #include "base/stringprintf.h"
 #include "strings/split.h"
-#include "testing/base/public/gunit.h"
-#include "testing/base/public/benchmark.h"
+#include "gtest/gtest.h"
+#include <benchmark/benchmark.h>
 #include "s2testing.h"
 
 TEST(S2LatLng, TestBasic) {
@@ -127,10 +127,18 @@ TEST(S2LatLng, TestToStringReturnsString) {
 }
 
 
-static void BM_ToPoint(int iters) {
+static void BM_ToPoint(benchmark::State& state) {
     S2LatLng ll(S1Angle::E7(0x150bc888), S1Angle::E7(0x5099d63f));
-    for (int i = 0; i < iters; i++) {
+    while (state.KeepRunning()) {
       ll.ToPoint();
     }
 }
 BENCHMARK(BM_ToPoint);
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  benchmark::Initialize(&argc, (const char **)argv);
+  int rc = RUN_ALL_TESTS();
+  benchmark::RunSpecifiedBenchmarks();
+  return rc;
+}

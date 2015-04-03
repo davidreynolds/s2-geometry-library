@@ -6,7 +6,11 @@ using std::max;
 using std::swap;
 using std::reverse;
 
+#if defined __GNUC__ || defined __APPLE__
+#include <ext/hash_set>
+#else
 #include <hash_set>
+#endif
 using __gnu_cxx::hash_set;
 
 #include "s2.h"
@@ -14,7 +18,7 @@ using __gnu_cxx::hash_set;
 #include "s2latlng.h"
 #include "s2testing.h"
 #include "util/math/matrix3x3-inl.h"
-#include "testing/base/public/gunit.h"
+#include "gtest/gtest.h"
 
 static inline int SwapAxes(int ij) {
   return ((ij >> 1) & 1) + ((ij & 1) << 1);
@@ -371,7 +375,7 @@ class RobustCCWTest : public testing::Test {
   // The following method is used to sort a collection of points in CCW order
   // around a given origin.  It returns true if A comes before B in the CCW
   // ordering (starting at an arbitrary fixed direction).
-  class LessCCW : public binary_function<S2Point const&, S2Point const&, bool> {
+  class LessCCW : public __gnu_cxx::binary_function<S2Point const&, S2Point const&, bool> {
    public:
     LessCCW(S2Point const& origin, S2Point const& start)
         : origin_(origin), start_(start) {
@@ -706,7 +710,7 @@ TEST(S2, S2PointHashSpreads) {
   int kTestPoints = 1 << 16;
   hash_set<size_t> set;
   hash_set<S2Point> points;
-  hash<S2Point> hasher;
+  __gnu_cxx::hash<S2Point> hasher;
   S2Point base = S2Point(1, 1, 1);
   for (int i = 0; i < kTestPoints; ++i) {
     // All points in a tiny cap to test avalanche property of hash

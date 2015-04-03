@@ -9,7 +9,7 @@ using std::vector;
 #include "base/commandlineflags.h"
 #include "base/scoped_ptr.h"
 #include "base/stringprintf.h"
-#include "testing/base/public/gunit.h"
+#include "gtest/gtest.h"
 #include "util/coding/coder.h"
 #include "s2cell.h"
 #include "s2latlng.h"

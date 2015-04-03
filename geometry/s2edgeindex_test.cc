@@ -16,8 +16,8 @@ using std::vector;
 #include "base/commandlineflags.h"
 #include "base/stringprintf.h"
 #include "base/logging.h"
-#include "testing/base/public/benchmark.h"
-#include "testing/base/public/gunit.h"
+#include <benchmark/benchmark.h>
+#include "gtest/gtest.h"
 #include "s2cap.h"
 #include "s2cell.h"
 #include "s2cellid.h"
@@ -278,15 +278,16 @@ TEST(S2EdgeIndex, QuadTreeGetsComputedAutomatically) {
 // Generates a bunch of random edges and tests each against all others for
 // crossings. This is just for benchmarking; there's no correctness testing in
 // this function. Set "cutoff_level" negative to apply brute force checking.
-static void ComputeCrossings(int num_edges,
+static void ComputeCrossings(benchmark::State& state,
+			     int num_edges,
                              double edge_length_max,
                              double cap_span_meters,
                              int brute_force) {
-  StopBenchmarkTiming();
+  state.PauseTiming();
   vector<S2Edge> all_edges;
   GenerateRandomEarthEdges(edge_length_max, cap_span_meters, num_edges,
                            &all_edges);
-  StartBenchmarkTiming();
+  state.ResumeTiming();
   if (brute_force) {
     for (vector<S2Edge>::const_iterator it = all_edges.begin();
          it != all_edges.end(); ++it) {
@@ -316,13 +317,15 @@ static void ComputeCrossings(int num_edges,
 // "Sparse" tests are those where we expect relatively few segment crossings.
 // In general the segment lengths are short (< 300m) and the random segments
 // are distributed over caps of radius 5-50km.
-
-static void BM_TestCrossingsSparse(int iters, int num_edges, int brute_force) {
-  for (int i = 0; i < iters; ++i) {
-    ComputeCrossings(num_edges, 30,  5000,  brute_force);
-    ComputeCrossings(num_edges, 100, 5000,  brute_force);
+static void BM_TestCrossingsSparse(benchmark::State& state) {
+  while (state.KeepRunning()) {
+    int num_edges = state.range_x();
+    int brute_force = state.range_y();
+    ComputeCrossings(state, num_edges, 30,  5000, brute_force);
+    ComputeCrossings(state, num_edges, 100, 5000, brute_force);
   }
 }
+
 BENCHMARK(BM_TestCrossingsSparse)
     ->ArgPair(10, true)
     ->ArgPair(10, false)
@@ -347,15 +350,13 @@ BENCHMARK(BM_TestCrossingsSparse)
 // and quad tree.
 
 // To compute kQuadTreeInsertionCost
-static void BM_QuadTreeInsertionCost(int iters) {
+static void BM_QuadTreeInsertionCost(benchmark::State& state) {
   const int kNumVertices = 1000;
-  StopBenchmarkTiming();
   S2Point loop_center = S2Testing::MakePoint("42:107");
   S2Loop* loop = S2Testing::MakeRegularLoop(loop_center, kNumVertices,
                                             7e-3);  // = 5km/6400km
-  StartBenchmarkTiming();
 
-  for (int i = 0; i < iters; ++i) {
+  while (state.KeepRunning()) {
     S2LoopIndex index(loop);
     index.ComputeIndex();
   }
@@ -364,8 +365,8 @@ static void BM_QuadTreeInsertionCost(int iters) {
 BENCHMARK(BM_QuadTreeInsertionCost);
 
 // To compute kQuadTreeFindCost
-static void BM_QuadTreeFindCost(int iters, int num_vertices) {
-  StopBenchmarkTiming();
+static void BM_QuadTreeFindCost(benchmark::State& state) {
+  int num_vertices = state.range_x();
   S2Point loop_center = S2Testing::MakePoint("42:107");
   S2Loop* loop = S2Testing::MakeRegularLoop(loop_center, num_vertices,
                                             7e-3);  // = 5km/6400km
@@ -374,9 +375,8 @@ static void BM_QuadTreeFindCost(int iters, int num_vertices) {
   S2LoopIndex index(loop);
   index.ComputeIndex();
   EdgeVectorIndex::Iterator can_it(&index);
-  StartBenchmarkTiming();
 
-  for (int i = 0; i < iters; ++i) {
+  while (state.KeepRunning()) {
     can_it.GetCandidates(p, q);
   }
   delete loop;
@@ -386,3 +386,11 @@ BENCHMARK(BM_QuadTreeFindCost)
   ->Arg(100)
   ->Arg(1000)
   ->Arg(10000);
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  benchmark::Initialize(&argc, (const char **)argv);
+  int rc = RUN_ALL_TESTS();
+  benchmark::RunSpecifiedBenchmarks();
+  return rc;
+}

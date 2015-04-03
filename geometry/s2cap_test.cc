@@ -4,7 +4,7 @@
 
 #include "base/commandlineflags.h"
 #include "base/logging.h"
-#include "testing/base/public/gunit.h"
+#include "gtest/gtest.h"
 #include "s2.h"
 #include "s2cell.h"
 #include "s2latlng.h"
@@ -15,7 +15,7 @@ static S2Point GetLatLngPoint(double lat_degrees, double lng_degrees) {
 }
 
 // About 9 times the double-precision roundoff relative error.
-static const double kEps = 1e-15;
+static const double kEps = 1e-14;
 
 TEST(S2Cap, Basic) {
   // Test basic properties of empty and full caps.

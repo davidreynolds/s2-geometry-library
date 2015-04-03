@@ -11,7 +11,7 @@ using std::multiset;
 #include "base/macros.h"
 #include "base/scoped_ptr.h"
 #include "strings/stringprintf.h"
-#include "testing/base/public/gunit.h"
+#include "gtest/gtest.h"
 #include "s2cap.h"
 #include "s2polygon.h"
 #include "s2polyline.h"

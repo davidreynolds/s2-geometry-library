@@ -9,7 +9,12 @@ using std::swap;
 using std::reverse;
 
 #include <cstdio>
+
+#if defined __GNUC__ || defined __APPLE__
+#include <ext/hash_map>
+#else
 #include <hash_map>
+#endif
 using __gnu_cxx::hash_map;
 
 #include <sstream>
@@ -20,18 +25,19 @@ using std::vector;
 #include "base/commandlineflags.h"
 #include "base/integral_types.h"
 #include "base/logging.h"
-#include "base/malloc_interface.h"
-#include "base/sysinfo.h"
-#include "testing/base/public/gunit.h"
+//#include "base/malloc_interface.h"
+//#include "base/sysinfo.h"
+//#include "testing/base/public/gunit.h"
+#include "gtest/gtest.h"
 #include "s2.h"
 #include "s2latlng.h"
 #include "s2testing.h"
 #include "util/math/mathutil.h"
 
-#define int8 HTM_int8  // To avoid conflicts with our own 'int8'
-#include "third_party/htm/include/SpatialIndex.h"
-#include "third_party/htm/include/RangeConvex.h"
-#undef int8
+//#define int8 HTM_int8  // To avoid conflicts with our own 'int8'
+//#include "third_party/htm/include/SpatialIndex.h"
+//#include "third_party/htm/include/RangeConvex.h"
+//#undef int8
 
 DEFINE_int32(iters, 20000000,
              "Number of iterations for timing tests with optimized build");
@@ -42,7 +48,7 @@ DEFINE_int32(build_level, 5, "HTM build level to use");
 static S2CellId GetCellId(double lat_degrees, double lng_degrees) {
   S2CellId id = S2CellId::FromLatLng(S2LatLng::FromDegrees(lat_degrees,
                                                            lng_degrees));
-  LOG(INFO) << hex << id.id();
+  LOG(INFO) << std::hex << id.id();
   return id;
 }
 
@@ -327,7 +333,7 @@ TEST(S2CellId, Neighbors) {
 
 TEST(S2CellId, OutputOperator) {
   S2CellId cell(0xbb04000000000000ULL);
-  ostringstream s;
+  std::ostringstream s;
   s << cell;
   EXPECT_EQ("5/31200", s.str());
 }
@@ -414,6 +420,7 @@ TEST(S2CellId, FromPointBenchmark) {
   EXPECT_NE(isum, 0);  // Don't let the loop get optimized away.
 }
 
+/*
 TEST(S2CellId, HtmBenchmark) {
   // This "test" is really a benchmark, so skip it unless we're optimized.
   if (DEBUG_MODE) return;
@@ -475,3 +482,4 @@ TEST(S2CellId, HtmBenchmark) {
           1e6 * pointById_time / htm_iters);
   EXPECT_NE(sum, 0);  // Don't let the loop get optimized away.
 }
+*/

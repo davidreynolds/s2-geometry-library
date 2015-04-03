@@ -10,7 +10,11 @@ using std::max;
 using std::swap;
 using std::reverse;
 
+#if defined __GNUC__ || defined __APPLE__
+#include <ext/hash_map>
+#else
 #include <hash_map>
+#endif
 using __gnu_cxx::hash_map;
 
 #include <queue>
@@ -28,8 +32,8 @@ using std::vector;
 #include "base/strtoint.h"
 #include "strings/split.h"
 #include "strings/stringprintf.h"
-#include "testing/base/public/benchmark.h"
-#include "testing/base/public/gunit.h"
+#include <benchmark/benchmark.h>
+#include "gtest/gtest.h"
 #include "s2cap.h"
 #include "s2cell.h"
 #include "s2cellid.h"
@@ -270,21 +274,27 @@ TEST(S2RegionCoverer, Accuracy) {
 
 
 // Two concentric loops don't cross so there is no 'fast exit'
-static void BM_Covering(int iters, int max_cells, int num_vertices) {
-  StopBenchmarkTiming();
+static void BM_Covering(benchmark::State& state) {
+  int max_cells = state.range_x();
+  int num_vertices = state.range_y();
   S2RegionCoverer coverer;
   coverer.set_max_cells(max_cells);
 
-  for (int i = 0; i < iters; ++i) {
+  while (state.KeepRunning()) {
     S2Point center = S2Testing::RandomPoint();
     S2Loop* loop = S2Testing::MakeRegularLoop(center, num_vertices, 0.005);
 
-    StartBenchmarkTiming();
     vector<S2CellId> covering;
     coverer.GetCovering(*loop, &covering);
-    StopBenchmarkTiming();
-
     delete loop;
   }
 }
 BENCHMARK(BM_Covering)->RangePair(8, 1024, 8, 1<<17);
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  benchmark::Initialize(&argc, (const char **)argv);
+  int rc = RUN_ALL_TESTS();
+  benchmark::RunSpecifiedBenchmarks();
+  return rc;
+}

@@ -23,8 +23,8 @@ using std::vector;
 #include "base/macros.h"
 #include "base/scoped_ptr.h"
 #include "strings/stringprintf.h"
-#include "testing/base/public/benchmark.h"
-#include "testing/base/public/gunit.h"
+#include <benchmark/benchmark.h>
+#include "gtest/gtest.h"
 #include "util/coding/coder.h"
 #include "s2.h"
 #include "s2cap.h"
@@ -1115,11 +1115,10 @@ string GenerateInputForBenchmark(int num_vertices_per_loop_for_bm) {
   return encoded;
 }
 
-static void BM_S2Decoding(int iters, int num_vertices_per_loop_for_bm) {
-  StopBenchmarkTiming();
+static void BM_S2Decoding(benchmark::State& state) {
+  int num_vertices_per_loop_for_bm = state.range_x();
   string encoded = GenerateInputForBenchmark(num_vertices_per_loop_for_bm);
-  StartBenchmarkTiming();
-  for (int i = 0; i < iters; ++i) {
+  while (state.KeepRunning()) {
     Decoder decoder(encoded.data(), encoded.size());
     S2Polygon decoded_polygon;
     decoded_polygon.Decode(&decoder);
@@ -1127,12 +1126,10 @@ static void BM_S2Decoding(int iters, int num_vertices_per_loop_for_bm) {
 }
 BENCHMARK_RANGE(BM_S2Decoding, 8, 131072);
 
-static void BM_S2DecodingWithinScope(int iters,
-                                     int num_vertices_per_loop_for_bm) {
-  StopBenchmarkTiming();
+static void BM_S2DecodingWithinScope(benchmark::State& state) {
+  int num_vertices_per_loop_for_bm = state.range_x();
   string encoded = GenerateInputForBenchmark(num_vertices_per_loop_for_bm);
-  StartBenchmarkTiming();
-  for (int i = 0; i < iters; ++i) {
+  while (state.KeepRunning()) {
     Decoder decoder(encoded.data(), encoded.size());
     S2Polygon decoded_polygon;
     decoded_polygon.DecodeWithinScope(&decoder);
@@ -1162,11 +1159,11 @@ void ConcentricLoops(S2Point center,
   poly->Init(&loops);
 }
 
-static void UnionOfPolygons(int iters,
-                            int num_vertices_per_loop,
+static void UnionOfPolygons(benchmark::State& state,
                             double second_polygon_offset) {
-  for (int i = 0; i < iters; ++i) {
-    StopBenchmarkTiming();
+  int num_vertices_per_loop = state.range_x();
+  while (state.KeepRunning()) {
+    state.PauseTiming();
     S2Polygon p1, p2;
     S2Point center = S2Testing::RandomPoint();
     ConcentricLoops(center,
@@ -1180,14 +1177,14 @@ static void UnionOfPolygons(int iters,
         FLAGS_num_loops_per_polygon_for_bm,
         num_vertices_per_loop,
         &p2);
-    StartBenchmarkTiming();
+    state.ResumeTiming();
     S2Polygon p_result;
     p_result.InitToUnion(&p1, &p2);
   }
 }
 
-static void BM_DeepPolygonUnion(int iters, int num_vertices_per_loop) {
-  UnionOfPolygons(iters, num_vertices_per_loop, 0.000001);
+static void BM_DeepPolygonUnion(benchmark::State& state) {
+  UnionOfPolygons(state, 0.000001);
 }
 BENCHMARK(BM_DeepPolygonUnion)
     ->Arg(8)
@@ -1199,8 +1196,8 @@ BENCHMARK(BM_DeepPolygonUnion)
     ->Arg(4096)
     ->Arg(8192);
 
-static void BM_ShallowPolygonUnion(int iters, int num_vertices_per_loop) {
-  UnionOfPolygons(iters, num_vertices_per_loop, 0.004);
+static void BM_ShallowPolygonUnion(benchmark::State& state) {
+  UnionOfPolygons(state, 0.004);
 }
 BENCHMARK(BM_ShallowPolygonUnion)
     ->Arg(8)
@@ -1212,8 +1209,8 @@ BENCHMARK(BM_ShallowPolygonUnion)
     ->Arg(4096)
     ->Arg(8192);
 
-static void BM_DisjointPolygonUnion(int iters, int num_vertices_per_loop) {
-  UnionOfPolygons(iters, num_vertices_per_loop, 0.3);
+static void BM_DisjointPolygonUnion(benchmark::State& state) {
+  UnionOfPolygons(state, 0.3);
 }
 BENCHMARK(BM_DisjointPolygonUnion)
     ->Arg(8)
@@ -1224,3 +1221,11 @@ BENCHMARK(BM_DisjointPolygonUnion)
     ->Arg(1024)
     ->Arg(4096)
     ->Arg(8192);
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  benchmark::Initialize(&argc, (const char **)argv);
+  int rc = RUN_ALL_TESTS();
+  benchmark::RunSpecifiedBenchmarks();
+  return rc;
+}
