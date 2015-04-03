@@ -1,0 +1,22 @@
+language: cpp
+compiler:
+  - clang
+  - gcc
+
+before_install:
+  - curl -O https://googletest.googlecode.com/files/gtest-1.7.0.zip
+  - unzip gtest-1.7.0.zip
+  - curl -OL https://github.com/google/benchmark/archive/master.zip
+  - unzip master.zip
+  - cd benchmark-master
+
+install:
+  - cmake . -DCMAKE_BUILD_TYPE=Release
+  - make
+  - sudo make install
+
+before_script:
+  - cd geometry
+
+script:
+  - GTEST_DIR=$HOME/gtest-1.7.0 make test
