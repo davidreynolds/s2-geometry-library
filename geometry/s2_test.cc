@@ -375,7 +375,7 @@ class RobustCCWTest : public testing::Test {
   // The following method is used to sort a collection of points in CCW order
   // around a given origin.  It returns true if A comes before B in the CCW
   // ordering (starting at an arbitrary fixed direction).
-  class LessCCW : public __gnu_cxx::binary_function<S2Point const&, S2Point const&, bool> {
+  class LessCCW : public std::binary_function<S2Point const&, S2Point const&, bool> {
    public:
     LessCCW(S2Point const& origin, S2Point const& start)
         : origin_(origin), start_(start) {
