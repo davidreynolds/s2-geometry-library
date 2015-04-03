@@ -4,6 +4,7 @@ compiler:
   - gcc
 
 before_install:
+  - sudo apt-get update -qq
   - curl -O https://googletest.googlecode.com/files/gtest-1.7.0.zip
   - unzip gtest-1.7.0.zip
   - curl -OL https://github.com/google/benchmark/archive/master.zip
@@ -11,12 +12,14 @@ before_install:
   - cd benchmark-master
 
 install:
+  - sudo apt-get install -qq gcc-4.8 g++-4.8
   - cmake . -DCMAKE_BUILD_TYPE=Release
   - make
   - sudo make install
+  - cd ..
 
 before_script:
   - cd geometry
 
 script:
-  - GTEST_DIR=$HOME/gtest-1.7.0 make test
+  - GTEST_DIR=../gtest-1.7.0 make test
