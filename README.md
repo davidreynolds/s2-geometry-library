@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/davidreynolds/s2-geometry-library.svg?branch=master)](https://travis-ci.org/davidreynolds/s2-geometry-library)
+
 Install gflags
 
 Linux:
