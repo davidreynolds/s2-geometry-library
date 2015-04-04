@@ -9,8 +9,8 @@ before_install:
   - sudo dpkg -i libgflags-dev_2.0-1_amd64.deb
   - curl -O https://googletest.googlecode.com/files/gtest-1.7.0.zip
   - unzip gtest-1.7.0.zip
-  - curl -OL https://github.com/google/benchmark/archive/master.zip
-  - unzip master.zip
+  - curl -OL https://github.com/google/benchmark/archive/v0.1.0.zip
+  - unzip benchmark-0.1.0.zip
   - cd benchmark-master
 
 install:
