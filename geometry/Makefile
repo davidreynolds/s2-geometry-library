@@ -105,7 +105,7 @@ clean:
 	rm -f util/coding/objs/*o
 	rm -f util/math/objs/*.o
 	rm -f base/objs/*.o
-	rm -f $(TESTS) $(BENCHMARKS)
+	rm -f s2test
 	rm -f s2/*wrap*
 	rm -f *.so
 
