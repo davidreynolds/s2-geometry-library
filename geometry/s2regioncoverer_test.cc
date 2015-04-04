@@ -290,11 +290,3 @@ static void BM_Covering(benchmark::State& state) {
   }
 }
 BENCHMARK(BM_Covering)->RangePair(8, 1024, 8, 1<<17);
-
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  benchmark::Initialize(&argc, (const char **)argv);
-  int rc = RUN_ALL_TESTS();
-  benchmark::RunSpecifiedBenchmarks();
-  return rc;
-}

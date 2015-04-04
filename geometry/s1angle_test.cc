@@ -11,7 +11,7 @@
 #include "s2latlng.h"
 #include "s2testing.h"
 
-DEFINE_int32(iters, (DEBUG_MODE ? 100 : 1000) * (1000 * 1000),
+DEFINE_int32(angle_iters, (DEBUG_MODE ? 100 : 1000) * (1000 * 1000),
              "Run timing tests with this many iterations");
 
 TEST(S1Angle, DefaultConstructor) {
@@ -122,7 +122,7 @@ TEST(S1Angle, TestPerformance) {
   // Time conversion from E6 to radians.
   double rad_sum = 0;
   const double from_e6_start = S2Testing::GetCpuTime();
-  for (int i = FLAGS_iters; i > 0; i -= kOpsPerLoop) {
+  for (int i = FLAGS_angle_iters; i > 0; i -= kOpsPerLoop) {
     // We structure both loops so that all the conversions can be done in
     // parallel.  Otherwise on some platforms the optimizer happens to do a
     // much better job of parallelizing one loop than the other.
@@ -139,15 +139,15 @@ TEST(S1Angle, TestPerformance) {
   const double from_e6_time = S2Testing::GetCpuTime() - from_e6_start;
   EXPECT_NE(rad_sum, 0);  // Don't let the sum get optimized away.
   LOG(INFO) << "From E6: "
-            << (FLAGS_iters / from_e6_time)
+            << (FLAGS_angle_iters / from_e6_time)
             << " values per second";
 
   // Time conversion from radians to E6.
-  const double delta = (2 * M_PI) / (FLAGS_iters - 1);
+  const double delta = (2 * M_PI) / (FLAGS_angle_iters - 1);
   double angle = -M_PI;
   long e6_sum = 0;
   const double to_e6_start = S2Testing::GetCpuTime();
-  for (int i = FLAGS_iters; i > 0; i -= kOpsPerLoop) {
+  for (int i = FLAGS_angle_iters; i > 0; i -= kOpsPerLoop) {
     long r0 = S1Angle::Radians(angle).e6(); angle += delta;
     long r1 = S1Angle::Radians(angle).e6(); angle += delta;
     long r2 = S1Angle::Radians(angle).e6(); angle += delta;
@@ -161,7 +161,7 @@ TEST(S1Angle, TestPerformance) {
   const double to_e6_time = S2Testing::GetCpuTime() - to_e6_start;
   EXPECT_NE(e6_sum + angle, 0);  // Don't let them get optimized away.
   LOG(INFO) << "  To E6: "
-            << (FLAGS_iters / to_e6_time)
+            << (FLAGS_angle_iters / to_e6_time)
             << " values per second";
 
   // Make sure that the To/From E6 times are not much different.

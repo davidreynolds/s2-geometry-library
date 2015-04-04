@@ -19,6 +19,7 @@ using __gnu_cxx::hash_set;
 #include "s2testing.h"
 #include "util/math/matrix3x3-inl.h"
 #include "gtest/gtest.h"
+#include <benchmark/benchmark.h>
 
 static inline int SwapAxes(int ij) {
   return ((ij >> 1) & 1) + ((ij & 1) << 1);
@@ -738,4 +739,12 @@ TEST(S2, S2PointHashCollapsesZero) {
   map[zero_pt] = 1;
   map[minus_zero_pt] = 2;
   ASSERT_EQ(1, map.size());
+}
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+  benchmark::Initialize(&argc, (const char **)argv);
+  int rc = RUN_ALL_TESTS();
+  benchmark::RunSpecifiedBenchmarks();
+  return rc;
 }

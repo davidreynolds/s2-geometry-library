@@ -761,11 +761,3 @@ static void BM_ContainsQuery(benchmark::State& state) {
   delete loop;
 }
 BENCHMARK_RANGE(BM_ContainsQuery, 4, 1 << 16);
-
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  benchmark::Initialize(&argc, (const char **)argv);
-  int rc = RUN_ALL_TESTS();
-  benchmark::RunSpecifiedBenchmarks();
-  return rc;
-}

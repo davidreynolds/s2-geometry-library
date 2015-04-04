@@ -30,63 +30,52 @@ endif
 
 LDFLAGS=$(GFLAGS_LNK) $(ZLIB_LNK)
 
-# Real targets
+TEST_OBJS = \
+	objs/s2_test.o\
+	objs/r1interval_test.o\
+	objs/s1angle_test.o\
+	objs/s1interval_test.o\
+	objs/s2cap_test.o\
+	objs/s2cell_test.o\
+	objs/s2cellid_test.o\
+	objs/s2cellunion_test.o\
+	objs/s2latlngrect_test.o\
+	objs/s2pointregion_test.o\
+	objs/s2polygonbuilder_test.o\
+	objs/s2polyline_test.o\
+	objs/s2r2rect_test.o\
+	objs/s2regionunion_test.o\
+	objs/s2edgeindex_test.o\
+	objs/s2edgeutil_test.o\
+	objs/s2latlng_test.o\
+	objs/s2loop_test.o\
+	objs/s2polygon_test.o\
+	objs/s2regioncoverer_test.o
 
-TESTS = \
-	r1interval_test\
-	s1angle_test\
-	s1interval_test\
-	s2_test\
-	s2cap_test\
-	s2cellid_test\
-	s2cell_test\
-	s2cellunion_test\
-	s2latlngrect_test\
-	s2pointregion_test\
-	s2polygonbuilder_test\
-	s2polyline_test\
-	s2r2rect_test\
-	s2regionunion_test
-
-BENCHMARKS = \
-	s2edgeindex_test\
-	s2edgeutil_test\
-	s2latlng_test\
-	s2loop_test\
-	s2polygon_test\
-	s2regioncoverer_test
+objs/%_test.o:%_test.cc
+	$(CCC) $(CFLAGS) -isystem $(GTEST_DIR)/include \
+	-c $< -o $@
 
 all: libs
 
-test: all $(TESTS) $(BENCHMARKS)
-	./r1interval_test
-	./s1angle_test
-	./s1interval_test
-	./s2_test
-	./s2cap_test
-	./s2cellid_test
-	./s2cell_test
-	./s2cellunion_test
-	./s2edgeindex_test --benchmark_filter=XXX
-	./s2edgeutil_test --benchmark_filter=XXX
-	./s2latlng_test --benchmark_filter=XXX
-	./s2latlngrect_test
-	./s2loop_test --benchmark_filter=XXX
-	./s2pointregion_test
-	./s2polygon_test --benchmark_filter=XXX
-	./s2polygonbuilder_test
-	./s2polyline_test
-	./s2r2rect_test
-	./s2regioncoverer_test --benchmark_filter=XXX
-	./s2regionunion_test
+test: all s2test
+	./s2test --benchmark_filter==XXX
 
-bench: all $(TESTS) $(BENCHMARKS)
-	./s2edgeindex_test --gtest_filter=XXX
-	./s2edgeutil_test --gtest_filter=XXX
-	./s2latlng_test --gtest_filter=XXX
-	./s2loop_test --gtest_filter=XXX
-	./s2polygon_test --gtest_filter=XXX
-	./s2regioncoverer_test --gtest_filter=XXX
+bench: all s2test
+	./s2test --gtest_filter=XXX
+
+s2test: $(TEST_OBJS)
+	$(CCC) -o s2test $(TEST_OBJS) \
+	libgtest.a \
+	libs2testing.a \
+	libs2.a \
+	libs2cellid.a \
+	libgoogle-strings.a \
+	libgoogle-base.a \
+	libgoogle-util-math.a \
+	libgoogle-util-coding.a \
+	-lbenchmark \
+	-lgflags -lssl -lcrypto -pthread
 
 LIBS = \
 	libgoogle-base.a\
@@ -99,21 +88,13 @@ LIBS = \
 
 libgtest = libgtest.a
 
-objs/gtest_main.o: $(GTEST_DIR)/src/gtest_main.cc
-	$(CCC) $(DEBUG) -isystem $(GTEST_DIR)/include -I$(GTEST_DIR) \
-	-c $(GTEST_DIR)/src/gtest_main.cc \
-	-o objs/gtest_main.o
-
 objs/gtest-all.o: $(GTEST_DIR)/src/gtest-all.cc
 	$(CCC) $(DEBUG) -isystem $(GTEST_DIR)/include -I$(GTEST_DIR) \
 	-c $(GTEST_DIR)/src/gtest-all.cc \
 	-o objs/gtest-all.o
 
-GTEST_OBJS = \
-	objs/gtest-all.o
-
-libgtest.a: $(GTEST_OBJS)
-	ar rv libgtest.a $(GTEST_OBJS)
+libgtest.a: objs/gtest-all.o
+	ar rv libgtest.a objs/gtest-all.o
 
 libs: $(LIBS) $(libgtest)
 
@@ -124,7 +105,7 @@ clean:
 	rm -f util/coding/objs/*o
 	rm -f util/math/objs/*.o
 	rm -f base/objs/*.o
-	rm -f $(TESTS)
+	rm -f $(TESTS) $(BENCHMARKS)
 	rm -f s2/*wrap*
 	rm -f *.so
 
@@ -290,141 +271,3 @@ libgoogle-util-geometry-s2.a: $(GOOGLE_UTIL_GEOMETRY_S2_LIB_OBJS)
 
 libgoogle-util-geometry-s2testing.a: $(GOOGLE_UTIL_GEOMETRY_S2TESTING_LIB_OBJS)
 	ar rv libs2testing.a $(GOOGLE_UTIL_GEOMETRY_S2TESTING_LIB_OBJS)
-
-GOOGLE_GEOMETRY_LIBS = \
-	libs2.a\
-	libs2cellid.a\
-	libgoogle-strings.a\
-	libgoogle-base.a\
-	libgoogle-util-math.a\
-	libgoogle-util-coding.a
-
-objs/%_test.o:%_test.cc
-	$(CCC) $(CFLAGS) -isystem $(GTEST_DIR)/include \
-	-c $< -o $@
-
-r1interval_test:objs/r1interval_test.o objs/gtest_main.o
-	$(CCC) -o r1interval_test objs/r1interval_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s1angle_test:objs/s1angle_test.o objs/gtest_main.o
-	$(CCC) -o s1angle_test objs/s1angle_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s1interval_test:objs/s1interval_test.o objs/gtest_main.o
-	$(CCC) -o s1interval_test objs/s1interval_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2_test:objs/s2_test.o objs/gtest_main.o
-	$(CCC) -o s2_test objs/s2_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2cap_test:objs/s2cap_test.o objs/gtest_main.o
-	$(CCC) -o s2cap_test objs/s2cap_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2cellid_test:objs/s2cellid_test.o objs/gtest_main.o
-	$(CCC) -o s2cellid_test objs/s2cellid_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2cell_test:objs/s2cell_test.o objs/gtest_main.o
-	$(CCC) -o s2cell_test objs/s2cell_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2cellunion_test:objs/s2cellunion_test.o objs/gtest_main.o
-	$(CCC) -o s2cellunion_test objs/s2cellunion_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2edgeindex_test:objs/s2edgeindex_test.o
-	$(CCC) -o s2edgeindex_test objs/s2edgeindex_test.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lbenchmark \
-	-lgflags -lssl -lcrypto -pthread
-
-s2edgeutil_test:objs/s2edgeutil_test.o
-	$(CCC) -o s2edgeutil_test objs/s2edgeutil_test.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lbenchmark \
-	-lgflags -lssl -lcrypto -pthread
-
-s2latlng_test:objs/s2latlng_test.o
-	$(CCC) -o s2latlng_test objs/s2latlng_test.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lbenchmark \
-	-lgflags -lssl -lcrypto -pthread
-
-s2latlngrect_test:objs/s2latlngrect_test.o
-	$(CCC) -o s2latlngrect_test objs/s2latlngrect_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2loop_test:objs/s2loop_test.o
-	$(CCC) -o s2loop_test objs/s2loop_test.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lbenchmark \
-	-lgflags -lssl -lcrypto -pthread
-
-s2pointregion_test:objs/s2pointregion_test.o
-	$(CCC) -o s2pointregion_test objs/s2pointregion_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2polygon_test:objs/s2polygon_test.o
-	$(CCC) -o s2polygon_test objs/s2polygon_test.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lbenchmark \
-	-lgflags -lssl -lcrypto -pthread
-
-s2polygonbuilder_test:objs/s2polygonbuilder_test.o
-	$(CCC) -o s2polygonbuilder_test objs/s2polygonbuilder_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2polyline_test:objs/s2polyline_test.o
-	$(CCC) -o s2polyline_test objs/s2polyline_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2r2rect_test:objs/s2r2rect_test.o
-	$(CCC) -o s2r2rect_test objs/s2r2rect_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread
-
-s2regioncoverer_test:objs/s2regioncoverer_test.o
-	$(CCC) -o s2regioncoverer_test objs/s2regioncoverer_test.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lbenchmark \
-	-lgflags -lssl -lcrypto -pthread
-
-s2regionunion_test:objs/s2regionunion_test.o
-	$(CCC) -o s2regionunion_test objs/s2regionunion_test.o objs/gtest_main.o \
-	libgtest.a libs2testing.a \
-	$(GOOGLE_GEOMETRY_LIBS) \
-	-lgflags -lssl -lcrypto -pthread

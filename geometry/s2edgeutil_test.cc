@@ -642,11 +642,3 @@ static void BM_RobustCrosserEdgesCross(benchmark::State& state) {
   }
 }
 BENCHMARK(BM_RobustCrosserEdgesCross);
-
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  benchmark::Initialize(&argc, (const char **)argv);
-  int rc = RUN_ALL_TESTS();
-  benchmark::RunSpecifiedBenchmarks();
-  return rc;
-}

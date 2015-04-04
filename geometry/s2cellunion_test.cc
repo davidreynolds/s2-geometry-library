@@ -265,6 +265,8 @@ TEST(S2CellUnion, Expand) {
   // the coverings by a random radius, and then make sure that the new
   // covering covers the expanded cap.  It also makes sure that the
   // new covering is not too much larger than expected.
+  
+  srandom(4);
 
   S2RegionCoverer coverer;
   for (int i = 0; i < 1000; ++i) {
