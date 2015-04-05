@@ -2,8 +2,8 @@
 PYTHON_VER=2.7
 SWIG_BINARY=swig
 #GTEST_DIR=
-GFLAGS_LNK=$(pkg-config --libs libgflags)
-ZLIB_LNK=$(pkg-config --libs zlib)
+GFLAGS_LNK=$(shell pkg-config --libs libgflags)
+ZLIB_LNK=$(shell pkg-config --libs zlib)
 
 #  ----- No more editing below -----
 
@@ -13,8 +13,8 @@ DEBUG=-O -DNDEBUG
 SYSCFLAGS=-fPIC
 CCC=g++
 
-GFLAGS_INC = $(pkg-config --cflags libgflags)
-ZLIB_INC = $(pkg-config --cflags zlib)
+GFLAGS_INC = $(shell pkg-config --cflags libgflags)
+ZLIB_INC = $(shell pkg-config --cflags zlib)
 CFLAGS= $(SYSCFLAGS) $(DEBUG) -I. -DARCH_K8 $(GFLAGS_INC) $(ZLIB_INC) \
         -Wno-deprecated -DS2_USE_EXACTFLOAT
 
