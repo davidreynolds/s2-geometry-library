@@ -743,7 +743,7 @@ TEST(S2, S2PointHashCollapsesZero) {
 
 int main(int argc, char **argv) {
   ::testing::InitGoogleTest(&argc, argv);
-  benchmark::Initialize(&argc, (const char **)argv);
+  benchmark::Initialize(&argc, argv);
   int rc = RUN_ALL_TESTS();
   benchmark::RunSpecifiedBenchmarks();
   return rc;

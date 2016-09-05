@@ -1,26 +1,30 @@
+sudo: required
+dist: trusty
 language: cpp
-compiler:
-  - gcc
+
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+      env: COMPILER=g++-5
 
 before_install:
-  - wget https://gflags.googlecode.com/files/libgflags0_2.0-1_amd64.deb
-  - sudo dpkg -i libgflags0_2.0-1_amd64.deb
-  - wget https://gflags.googlecode.com/files/libgflags-dev_2.0-1_amd64.deb
-  - sudo dpkg -i libgflags-dev_2.0-1_amd64.deb
-  - curl -O https://googletest.googlecode.com/files/gtest-1.7.0.zip
-  - unzip gtest-1.7.0.zip
-  - curl -o benchmark-0.1.0.zip -L https://github.com/google/benchmark/archive/v0.1.0.zip
-  - unzip benchmark-0.1.0.zip
-  - cd benchmark-0.1.0
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libgflags-dev
+  - curl -o benchmark-1.0.0.zip -L https://github.com/google/benchmark/archive/v1.0.0.zip
+  - unzip benchmark-1.0.0.zip
 
 install:
-  - cmake . -DCMAKE_BUILD_TYPE=Release
-  - make
+  - pushd benchmark-1.0.0
+  - cmake -DCMAKE_CXX_COMPILER=$COMPILER -DCMAKE_BUILD_TYPE=Release . && make
   - sudo make install
-  - cd ..
-
-before_script:
-  - cd geometry
+  - popd
+  - cmake -DCMAKE_CXX_COMPILER=$COMPILER . && make
 
 script:
-  - GTEST_DIR=../gtest-1.7.0 make test
+  - ./geometry/s2test --benchmark_filter=XXX
